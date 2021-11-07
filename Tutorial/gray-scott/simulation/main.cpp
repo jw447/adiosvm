@@ -142,8 +142,6 @@ int main(int argc, char **argv)
         MPI_Barrier(comm);
 
         log << i << "\t" << time_step << "\t" << time_compute << "\t"
-            << time_write << std::endl;
-#endif
     }
 
     writer_main.close();

@@ -1,0 +1,86 @@
+#   COMPILERS
+CC = gcc
+MPICC = mpicc
+
+WORK_INC = -I/gpfs/alpine/proj-shared/csc143/jwang/io_modeling/io_cost/src/include
+
+SZ_PATH_ROOT = /gpfs/alpine/proj-shared/csc143/jwang/io_modeling/SZ
+ZFP_PATH_ROOT= /gpfs/alpine/proj-shared/csc143/jwang/io_modeling/zfp
+A2_PATH_ROOT = /gpfs/alpine/csc143/proj-shared/jwang/io_modeling/ADIOS2
+H5_PATH_ROOT = /gpfs/alpine/proj-shared/csc143/jwang/io_modeling/hdf5
+H5Z_PATH_ROOT= /gpfs/alpine/proj-shared/csc143/jwang/io_modeling/H5Z-ZFP
+H5S_PATH_ROOT= /gpfs/alpine/proj-shared/csc143/jwang/io_modeling/SZ/hdf5-filter/H5Z-SZ
+
+SZINC = -I$(SZ_PATH_ROOT)/install/include
+SZLIB = -L$(SZ_PATH_ROOT)/install/lib -lSZ -lzlib -lzstd
+
+ZFPINC =-I$(ZFP_PATH_ROOT)/include
+ZFPLIB =-L$(ZFP_PATH_ROOT)/lib -lzfp
+
+A2INC = -I$(A2_PATH_ROOT)/adios2-build/install/include
+A2LIB_NOMPI = -L$(A2_PATH_ROOT)/adios2-build/install/lib64 -ladios2_c 
+A2LIB_MPI = -L$(A2_PATH_ROOT)/adios2-build/install/lib64   -ladios2_c -DADIOS2_USE_MPI -lmpi -ladios2_c_mpi
+
+H5SRC = -I$(H5_PATH_ROOT)/src
+H5INC = -I$(H5_PATH_ROOT)/install/include
+H5LIB = -L$(H5_PATH_ROOT)/install/lib -lhdf5 -lmpi
+
+H5SZINC = -I$(H5Z_PATH_ROOT)/include
+H5SZLIB = -L$(H5Z_PATH_ROOT)/lib -lhdf5sz
+
+H5ZFPINC = -I$(H5Z_PATH_ROOT)/install/include
+H5ZFPLIB = -L$(H5Z_PATH_ROOT)/install/lib -lh5zzfp -lmpi -DH5Z_ZFP_USE_PLUGIN
+
+CFLAGS=-lm -std=c99 -O3 -Wall -Wl,--no-as-needed
+
+#file_all: readFile_mpi writeFile_mpi
+#adios_all: compressAdios_nocomp_mpi compressAdios_sz_mpi compressAdios_zfp_mpi readAdios_nocomp_mpi readAdios_sz_mpi readAdios_zfp_mpi 
+#hdf5_all: compressHdf5_nocomp_mpi compressHdf5_sz_mpi compressHdf5_zfp_mpi readHdf5_nocomp_mpi readHdf5_sz_mpi readHdf5_zfp_mpi
+#all: adios_all hdf5_all file_all 
+all:  readAdios_nocomp_mpi
+#
+### file
+#readFile_mpi: src/file/readFile_mpi.c
+#	$(CC) -o build/readFile_mpi src/file/reader.c src/file/readFile_mpi.c $(CFLAGS) -lmpi  $(SZINC) $(SZLIB) $(ZFPINC) $(ZFPLIB)
+#
+#writeFile_mpi: src/file/writeFile_mpi.c
+#	$(CC) -o build/writeFile_mpi src/file/reader.c src/file/writeFile_mpi.c $(CFLAGS) -lmpi $(SZINC) $(SZLIB) $(ZFPINC) $(ZFPLIB) 
+#
+## adios
+#compressAdios_nocomp_mpi: src/adios2/compressAdios_nocomp_mpi.c
+#	$(CC) -o build/compressAdios_nocomp_mpi src/adios2/compressAdios_nocomp_mpi.c $(CFLAGS) $(A2INC) $(A2LIB_MPI) $(SZINC) $(SZLIB) $(ZFPINC) $(ZFPLIB)
+#
+#compressAdios_sz_mpi: src/adios2/compressAdios_sz_mpi.c
+#	$(CC) -o build/compressAdios_sz_mpi src/adios2/compressAdios_sz_mpi.c $(CFLAGS) $(A2INC) $(A2LIB_MPI) $(SZINC) $(SZLIB) $(ZFPINC) $(ZFPLIB)
+#
+#compressAdios_zfp_mpi: src/adios2/compressAdios_zfp_mpi.c
+#	$(CC) -o build/compressAdios_zfp_mpi src/adios2/compressAdios_zfp_mpi.c $(CFLAGS) $(A2INC) $(A2LIB_MPI) $(SZINC) $(SZLIB) $(ZFPINC) $(ZFPLIB)
+#
+readAdios_nocomp_mpi: simulation/readAdios_nocomp_mpi.c
+	$(CC) -o simulation/readAdios_nocomp_mpi simulation/readAdios_nocomp_mpi.c $(CFLAGS) $(A2INC) $(A2LIB_MPI) $(SZINC) $(SZLIB) $(ZFPINC) $(ZFPLIB)
+
+#readAdios_sz_mpi: src/adios2/readAdios_sz_mpi.c
+#	$(CC) -o build/readAdios_sz_mpi src/adios2/readAdios_sz_mpi.c $(CFLAGS) $(A2INC) $(A2LIB_MPI) $(SZINC) $(SZLIB) $(ZFPINC) $(ZFPLIB)
+#
+#readAdios_zfp_mpi: src/adios2/readAdios_zfp_mpi.c
+#	$(CC) -o build/readAdios_zfp_mpi src/adios2/readAdios_zfp_mpi.c $(CFLAGS) $(A2INC) $(A2LIB_MPI) $(SZINC) $(SZLIB) $(ZFPINC) $(ZFPLIB)
+#
+### hdf5
+#compressHdf5_nocomp_mpi: src/hdf5/compressHdf5_nocomp_mpi.c
+#	$(CC) -o build/compressHdf5_nocomp_mpi src/hdf5/compressHdf5_nocomp_mpi.c $(CFLAGS) $(H5SRC) $(H5INC) $(H5LIB)
+#
+#compressHdf5_sz_mpi: src/hdf5/compressHdf5_sz_mpi.c
+#	$(CC) -o build/compressHdf5_sz_mpi src/hdf5/compressHdf5_sz_mpi.c $(CFLAGS) $(H5SRC) $(H5INC) $(H5LIB) $(SZINC) $(SZLIB) $(H5SZINC) $(H5SZLIB)
+#
+#compressHdf5_zfp_mpi: src/hdf5/compressHdf5_zfp_mpi.c
+#	$(CC) -o build/compressHdf5_zfp_mpi src/hdf5/compressHdf5_zfp_mpi.c $(CFLAGS) $(H5SRC) $(H5INC) $(H5LIB) $(H5ZFPINC) $(H5ZFPLIB) $(ZFPINC) $(ZFPLIB) 
+#
+#readHdf5_nocomp_mpi: src/hdf5/readHdf5_nocomp_mpi.c
+#	$(CC) -o build/readHdf5_nocomp_mpi src/hdf5/readHdf5_nocomp_mpi.c $(CFLAGS) $(H5SRC) $(H5INC) $(H5LIB)
+#
+#readHdf5_sz_mpi: src/hdf5/readHdf5_sz_mpi.c
+#	$(CC) -o build/readHdf5_sz_mpi src/hdf5/readHdf5_sz_mpi.c $(CFLAGS) $(H5SRC) $(H5INC) $(H5LIB) $(SZINC) $(SZLIB) $(H5SZINC) $(H5SZLIB)
+#
+#readHdf5_zfp_mpi: src/hdf5/readHdf5_zfp_mpi.c
+#	$(CC) -o build/readHdf5_zfp_mpi src/hdf5/readHdf5_zfp_mpi.c $(CFLAGS) $(H5SRC) $(H5INC) $(H5LIB)  $(H5ZFPINC) $(H5ZFPLIB) $(ZFPINC) $(ZFPLIB)
+#
